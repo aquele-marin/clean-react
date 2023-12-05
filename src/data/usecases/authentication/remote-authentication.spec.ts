@@ -1,13 +1,14 @@
 import { RemoteAuthentication } from './remote-authentication'
-import { HttpPostClientSpy } from '../../test/mock-http-client'
+import { HttpPostClientSpy } from '@/data/test/mock-http-client'
 import { faker } from '@faker-js/faker'
-import { mockAuthentication } from '../../../domain/test/mock-authentication'
+import { mockAuthentication } from '@/domain/test/mock-authentication'
 
 // Factory pattern
 type SutTypes = {
     sut: RemoteAuthentication
     httpPostClientSpy: HttpPostClientSpy
 }
+
 const makeSut = (url: string = faker.internet.url()): SutTypes => {
     const httpPostClientSpy = new HttpPostClientSpy()
     // System under test (sut)
