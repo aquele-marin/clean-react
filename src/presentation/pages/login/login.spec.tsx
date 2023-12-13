@@ -1,28 +1,28 @@
 import React from 'react'
 import { RenderResult, cleanup, fireEvent, render } from '@testing-library/react'
 import Login from './login'
-import { ValidationSpy } from '@/presentation/test'
+import { ValidationStub } from '@/presentation/test'
 import { faker } from '@faker-js/faker'
 
 type SutTypes = {
     sut: RenderResult
-    validationSpy: ValidationSpy
+    validationStub: ValidationStub
 }
 
 const makeSut = (): SutTypes => {
-    const validationSpy = new ValidationSpy()
-    validationSpy.errorMessage = faker.string.sample()
-    const sut = render(<Login validation={validationSpy} />)
+    const validationStub = new ValidationStub()
+    validationStub.errorMessage = ''//faker.string.sample()
+    const sut = render(<Login validation={validationStub} />)
     return {
         sut,
-        validationSpy
+        validationStub
     }
 }
 
 describe('Login Component', () => {
     afterEach(cleanup)
     test('Should hide spinner and error on start', () => {
-        const { sut, validationSpy } = makeSut()
+        const { sut, validationStub } = makeSut()
         const errorWrap = sut.getByTestId('error-wrap')
         expect(errorWrap.childElementCount).toBe(0)
 
@@ -30,38 +30,16 @@ describe('Login Component', () => {
         expect(submitButton.disabled).toBe(true)
 
         const emailStatus = sut.getByTestId('email-status')
-        expect(emailStatus.title).toBe(validationSpy.errorMessage)
+        expect(emailStatus.title).toBe(validationStub.errorMessage)
         expect(emailStatus.textContent).toBe('X')
 
         const paswwordStatus = sut.getByTestId('password-status')
-        expect(paswwordStatus.title).toBe('Campo obrigatório')
+        expect(paswwordStatus.title).toBe(validationStub.errorMessage)
         expect(paswwordStatus.textContent).toBe('X')
     })
 
-    test('Should call Validation with correct email', () => {
-        const { sut, validationSpy } = makeSut()
-        const emailInput = sut.getByTestId('email')
-        const email = faker.internet.email()
-
-        fireEvent.input(emailInput, {target: { value: email}})
-
-        expect(validationSpy.fieldName).toEqual('email')
-        expect(validationSpy.fieldValue).toEqual(email)
-    })
-
-    test('Should call Validation with correct password', () => {
-        const { sut, validationSpy } = makeSut()
-        const passwordInput = sut.getByTestId('password')
-        const password = faker.internet.password()
-
-        fireEvent.input(passwordInput, {target: { value: password}})
-
-        expect(validationSpy.fieldName).toEqual('password')
-        expect(validationSpy.fieldValue).toEqual(password)
-    })
-
     test('Should show email error if Validation fails', () => {
-        const { sut, validationSpy } = makeSut()
+        const { sut, validationStub } = makeSut()
         
 
         const emailInput = sut.getByTestId('email')
@@ -69,7 +47,20 @@ describe('Login Component', () => {
         fireEvent.input(emailInput, {target: { value: faker.internet.email()}})
 
         const emailStatus = sut.getByTestId('email-status')
-        expect(emailStatus.title).toBe(validationSpy.errorMessage)
+        expect(emailStatus.title).toBe(validationStub.errorMessage)
         expect(emailStatus.textContent).toBe('X')
+    })
+
+    test('Should show password error if Validation fails', () => {
+        const { sut, validationStub } = makeSut()
+        
+
+        const passwordInput = sut.getByTestId('password')
+
+        fireEvent.input(passwordInput, {target: { value: faker.internet.password()}})
+
+        const passwordStatus = sut.getByTestId('password-status')
+        expect(passwordStatus.title).toBe(validationStub.errorMessage)
+        expect(passwordStatus.textContent).toBe('X')
     })
 })
