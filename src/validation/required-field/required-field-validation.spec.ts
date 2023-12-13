@@ -1,5 +1,6 @@
 import { RequiredFieldError } from "../errors/required-field-error"
 import { RequiredFieldValidation } from "./required-field-validation"
+import { faker } from "@faker-js/faker"
 
 
 describe('RequiredFieldValidation', () => {
@@ -7,5 +8,11 @@ describe('RequiredFieldValidation', () => {
         const sut = new RequiredFieldValidation('email')
         const error = sut.validate('')
         expect(error).toEqual(new RequiredFieldError())
+    })
+
+    test('Should return falsy if field is not empty', () => {
+        const sut = new RequiredFieldValidation('email')
+        const error = sut.validate(faker.internet.email())
+        expect(error).toBeFalsy()
     })
 })
