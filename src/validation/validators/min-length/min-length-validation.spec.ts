@@ -18,4 +18,5 @@ describe('MinLengthValidation', () => {
         const error = sut.validate('12353')
         expect(error).toBeFalsy()
     })
+
 })
