@@ -42,7 +42,7 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
     return <div className={Styles.login}>
         <LoginHeader />
         <Context.Provider value={{ state, setState}}>
-            <form className={Styles.form} onSubmit={handleSubmit}>
+            <form data-testid="form" className={Styles.form} onSubmit={handleSubmit}>
                 <h2>Login</h2>
 
                 <Input type="email" name="email" placeholder="Digite seu e-mail" />
